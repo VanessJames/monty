@@ -1,22 +1,18 @@
 #include "monty.h"
-
 /**
- * _add - Function that adds the top two elements of the stack.
- * @head: stack head
- * @data: unsused parameter
- * @line_number: Line number of the current opcode
- */
+  * _add - function adds top two elements of the stack
+  * @head: void
+  * @data: void
+  */
 void _add(stack_t **head, unsigned int data)
 {
-	(void)data;
+	(void)head;
 
 	if (gs.size < 2)
-	{
-		fprintf(stderr, "L%d: cant add, stack too short\n", line_number)
-		myexit(-8, NULL);
-	}
-	int result = gs.tail->n + gs.tail->prev->n;
+		myexit(-8, "add");
 
-	gs.tail->prev->n = result;
-	pop(head, data);
+	data = gs.tail->n;
+	mlist_remove(gs.tail);
+	data += gs.tail->n;
+	gs.tail->n = data;
 }
