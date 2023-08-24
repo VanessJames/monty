@@ -7,25 +7,14 @@
 
 void push(stack_t **head, unsigned int data)
 {
-	if (gs.argv[1] == NULL || !is_valid_integer(gs.argv[1]))
-	{
-		fprintf(stderr, "L%u: usage: push integer\n", gs.line_number);
-		myexit(EXIT_FAILURE, NULL)
-	}
-
-	date = atoi(gs.argv[1]);
+	(void)head;
 
 	if (gs.mode == 1)
-	{
-		if (mlist_ins_end(head, data) == NULL)
-			myexit(EXIT_FAILURE, "Memory allocation failure");
-	}
+		data = mlist_ins_end(gs.intarg);
 	else
-	{
-		if (mylist_ins_beg(head, data) == NULL)
-			myexit(EXIT_FAILURE, "Memory allocation failure");
-	}
-}
+		data = mlist_ins_beg(gs.intarg);
+	if (data == 42)
+		myexit(-5, NULL);
 }
 /**
   * pall -  function prints all values on stack from the top
