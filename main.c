@@ -1,7 +1,11 @@
 #include "monty.h"
 
+vars *get_global_vars(void)
+{
+	static vars var;
 
-vars var;
+	return (&var);
+}
 
 
 /**
@@ -12,6 +16,8 @@ vars var;
  */
 int main(int argc, char *argv[])
 {
+	vars *var = get_global_vars();
+
 	char *opcode;
 
 	if (argc != 2)
