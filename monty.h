@@ -5,6 +5,13 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <errno.h>
+#include <fcntl.h>
+#define Buffsize 30
 
 /* Data structures */
 
@@ -38,11 +45,42 @@ typedef struct instruction_s
         void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
+/**
+ * struct glob_var - The golbal variables
+ * @file: The file name
+ * @buff: This Gets line buffer
+ * @tmp: This Gets line counter
+ * @dict: The instruction dictionary
+ * @head: pointes to list
+ * @line_number: Stores current line of file
+ * @MODE: Program configuration stack or queue
+ */
+typedef struct glob_var
+{
+	FILE *file;
+	char *buff;
+	size_t current;
+	instruction_t *dict;
+	stack_t *head;
+	unsigned int line_number;
+	int MODE;
+} vars;
+
+
+extern vars var;
+
 /* Function prototypes */
 
 void push(stack_t **stack, unsigned int line_number);
 void pall(stack_t **stack, unsigned int line_number);
-void process_opcodes(FILE *file, stack_t **stack);
-int main(int argc, char *argv[]);
+void pint(stack_t **stack, unsigned int line_number);
+void pop(stack_t **stack, unsigned int line_number);
+void add(stack_t **stack, unsigned int line_number);
+void swap(stack_t **stack, unsigned int line_number);
+int start_vars(vars *var);
+instruction_t *create_instru();
+int call_funct(vars *var, char *opcode);
+void free_all(void);
+int _isdigit(char *string);
 
 #endif /* MONTY_H */
