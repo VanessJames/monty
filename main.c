@@ -1,61 +1,62 @@
 #include "monty.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "lists.h"
 
-ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 
-mlist_t gs;
+data_t data = DATA_INIT;
 
 /**
- * mlist_destroy - Closes file descriptor and frees buffer.
+ * monty - helper function for main function
+ * @args: pointer to struct of arguments from main
+ *
+ * Description: opens and reads from the file
+ * containing the opcodes, and calls the function
+ * that will find the corresponding executing function
  */
-void mlist_destroy(void)
+void monty(args_t *args)
 {
-	while (gs.size > 0)
-		mlist_remove(gs.tail);
+	size_t len = 0;
+	int get = 0;
+	void (*code_func)(stack_t **, unsigned int);
 
-	if (gs.fd != NULL)
-		fclose(gs.fd);
-
-	if (gs.buffer != NULL)
-		free(gs.buffer);
+	process_file(args);
+	while (1)
+	{
+		args->line_number++;
+		get = getline(&(data.line), &len, data.fptr);
+		if (get < 0)
+			break;
+		data.words = strtow(data.line);
+		/*printf("data %s value %d\n", data.words[0], data.words[0][0]);*/
+		if (data.words[0] == NULL || data.words[0][0] == '#')
+		{
+			free_all(0);
+			continue;
+		}
+		code_func = get_func(data.words);
+		if (!code_func)
+			code_error(args->line_number);
+		code_func(&(data.stack), args->line_number);
+		free_all(0);
+	}
+	free_all(1);
 }
 
 /**
- * main - Monty bytecode interpreter
- * @ac: Argument count
- * @av: Argument variables entered from the command line
- * Return: 0 on success
+ * main - entry point for monty bytecode interpreter
+ * @argc: number of arguments
+ * @argv: array of arguments
+ *
+ * Return: EXIT_SUCCESS or EXIT_FAILURE
  */
-int main(int ac, char **av)
+int main(int argc, char *argv[])
 {
-	FILE *FD;
-	char *buffer = NULL;
-	ssize_t glcount = 0;
-	size_t bufflen = 0;
+	args_t args;
 
-	mlist_init();
+	args.av = argv[1];
+	args.ac = argc;
+	args.line_number = 0;
 
-	if (ac != 2)
-		myexit(-1, NULL);
+	monty(&args);
 
-	FD = fopen(av[1], "r");
-	if (FD == NULL)
-		myexit(-2, av[1]);
-
-	gs.fd = FD;
-
-	while (glcount != -1)
-	{
-		gs.ln++;
-		glcount = getline(&buffer, &bufflen, FD);
-		if (glcount == -1)
-			break;
-
-		gs.buffer = buffer;
-		run_opcode(buffer);
-	}
-
-	mlist_destroy();
 	return (EXIT_SUCCESS);
 }
