@@ -7,17 +7,14 @@
 
 void push(stack_t **head, unsigned int data)
 {
-	(void)data;
+	(void)head;
 
-	if (gs.intarg == NULL || !is_number(gs.intarg))
-	{
-		fprintf(stderr, "L%d: usage integer\n", gs.line_number);
-		myexit(EXIT_FAILURE);
-	}
-	if (gs.mode == STACK)
-		mlist_ins_beg(head, atoi(gs.intarg));
+	if (gs.mode == 1)
+		data = mlist_ins_end(gs.intarg);
 	else
-		mlist_ins_end(head, atoi(gs.intarg));
+		data = mlist_ins_beg(gs.intarg);
+	if (data == 42)
+		myexit(-5, NULL);
 }
 /**
   * pall -  function prints all values on stack from the top
@@ -26,15 +23,16 @@ void push(stack_t **head, unsigned int data)
   */
 void pall(stack_t **head, unsigned int data)
 {
-	stack_t *list = *head;
-
+	stack_t *list;
+	(void)head;
 	(void)data;
 
-	while (list)
-	{
+	list = gs.tail;
+	if (gs.size == 0)
+		return;
+
+	for (; list; list = list->prev)
 		printf("%d\n", list->n);
-		list = list->next;
-	}
 }
 /**
 * pint- prints value on the top of the stack
