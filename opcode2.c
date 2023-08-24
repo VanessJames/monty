@@ -4,15 +4,13 @@
   * @head: void
   * @data: void
   */
-void _add(stack_t **head, unsigned int data)
+void _add(stack_t **head, unsigned int line_number)
 {
-	(void)head;
-
-	if (gs.size < 2)
-		myexit(-8, "add");
-
-	data = gs.tail->n;
-	mlist_remove(gs.tail);
-	data += gs.tail->n;
-	gs.tail->n = data;
+	if (*head == NULL || (*head)->next == NULL)
+	{
+		fprintf(stderr, "L%u: cant add, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+	(*head)->next->n += (*head)->n;
+	pop(head, line_number);
 }
