@@ -96,9 +96,10 @@ int chk_int(const char *argint)
 * nop - the function does nothing
 * @head: voided
 * @data: voided
+* Return: does not need a return
 */
 void nop(stack_t **head, unsigned int data)
 {
-	(void)head;
 	(void)data;
+	(void)head;
 }
